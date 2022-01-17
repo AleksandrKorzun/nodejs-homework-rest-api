@@ -1,8 +1,17 @@
-const { Contact } = require("../../model")
+const { Contact } = require("../../model/contact")
 
 
 const deleteById = async (req, res, next) => {
     const {id} = req.params
+    const contact = await Contact.find({_id: id, owner: req.user._id});
+    if (!contact) {
+        return res.status(401).json({
+            Status: "401 Unauthorized",
+            ResponseBody: {
+            "message": "Email or password is wrong"
+            }
+        })
+    }
     const contacts = await Contact.findByIdAndRemove(id)
     if (contacts) {
       res.json({
