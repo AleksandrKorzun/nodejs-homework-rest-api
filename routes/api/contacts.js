@@ -1,22 +1,22 @@
 const express = require('express')
-const { nanoid } = require('nanoid')
-const router = express.Router();
 
+const router = express.Router();
+const authCheck = require('../../middlewares/authCheck')
 const {contacts: ctrl} = require('../../controller')
 const ctrlWrapper = require('../../middlewares/ctrlWrapper');
 
 
-router.get('/', ctrlWrapper(ctrl.getAll))
+router.get('/', authCheck, ctrlWrapper(ctrl.getAll))
 
-router.get('/:id', ctrlWrapper(ctrl.getById))
+router.get('/:id', authCheck, ctrlWrapper(ctrl.getById))
 
-router.post('/', ctrlWrapper(ctrl.add))
+router.post('/', authCheck, ctrlWrapper(ctrl.add))
 
-router.delete('/:id', ctrlWrapper(ctrl.deleteById))
+router.delete('/:id', authCheck, ctrlWrapper(ctrl.deleteById))
 
-router.patch('/:id', ctrlWrapper(ctrl.updateById))
+router.patch('/:id', authCheck, ctrlWrapper(ctrl.updateById))
 
-router.patch('/:id/favorite', ctrlWrapper(ctrl.updateStatusContact))
+router.patch('/:id/favorite', authCheck, ctrlWrapper(ctrl.updateStatusContact))
 
 
 module.exports = router
