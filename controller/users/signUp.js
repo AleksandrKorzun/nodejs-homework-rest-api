@@ -1,8 +1,11 @@
 const bcrypt = require('bcrypt')
 const gravatar = require('gravatar')
+const {nanoid} = require('nanoid');
+const { transporter } = require('../../helpers');
 
 const { joiRegisterSchema, User } = require("../../model/user")
 
+const {SITE_NAME} = process.env;
 
 const signUp = async (req, res, next) => {
     const {error} = joiRegisterSchema.validate(req.body);
@@ -27,14 +30,30 @@ const signUp = async (req, res, next) => {
     const salt = await bcrypt.genSalt(10)
     const hashPassword = await bcrypt.hash(password, salt);
     const avatarURL = gravatar.url(email)
-    const newUser = await User.create({email, avatarURL, password: hashPassword})
+    const verificationToken = nanoid();
+    console.log(verificationToken)
+    const newUser = await User.create({
+        email, 
+        avatarURL, 
+        password: hashPassword,
+        verificationToken,
+    })
+    
+    const mail = {
+        to: email,
+        from: "oleksandr.korzun@meta.ua",
+        subject: "verification email",
+        html: `<a target="_blank" href="${SITE_NAME}/api/users/verify/${verificationToken}">Потвердите свой email</a>`,
+    };
+    await transporter.sendMail(mail);
+    
     res.status(201).json({
         "Status": "201 Created",
         "Content-Type": "application/json",
         ResponseBody:{
             user: {
                 email,
-                subscription: newUser.subscription
+                subscription: newUser.subscription,
             }
         }
        
