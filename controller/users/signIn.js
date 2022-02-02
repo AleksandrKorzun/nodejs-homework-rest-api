@@ -32,6 +32,11 @@ const signIn = async (req, res, next) => {
             }
         })
     }
+    if(user.verificationToken) {
+        return res.status(400).json({
+            message: "Verification not completed"
+        })
+    }
     const payload = {
         id: user._id
     }

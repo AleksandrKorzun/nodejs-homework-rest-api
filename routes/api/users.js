@@ -13,6 +13,8 @@ router.post('/logout', authCheck, ctrlWrapper(ctrl.logOut));
 router.get('/current', authCheck, ctrlWrapper(ctrl.getCurrent));
 router.patch('/', authCheck, ctrlWrapper(ctrl.updateSubscription))
 router.patch('/avatars', authCheck, upload.single("avatar"), resizeImg, ctrlWrapper(ctrl.setAvatar))
+router.get('/verify/:verificationToken', ctrlWrapper(ctrl.getVerify));
+router.post('/verify', ctrlWrapper(ctrl.setVerify));
 
 
 module.exports = router;
